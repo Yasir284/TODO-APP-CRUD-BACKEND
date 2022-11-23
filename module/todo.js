@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
 const todoSchema = new mongoose.Schema({
-  todo: String,
+  title: {
+    type: String,
+    require: [true, "Field is required"],
+  },
   tasks: [],
 });
 
