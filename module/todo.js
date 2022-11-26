@@ -5,7 +5,7 @@ const todoSchema = new mongoose.Schema({
     type: String,
     require: [true, "Field is required"],
   },
-  tasks: [],
+  tasks: [String],
 });
 
 module.exports = mongoose.model("todo", todoSchema);
