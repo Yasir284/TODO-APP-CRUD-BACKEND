@@ -6,6 +6,10 @@ const todoSchema = new mongoose.Schema(
       type: String,
       require: [true, "Field is required"],
     },
+    textTheme: {
+      type: String,
+      default: null,
+    },
     tasks: [
       {
         task: String,
@@ -17,13 +21,13 @@ const todoSchema = new mongoose.Schema(
           type: Boolean,
           default: false,
         },
-        textTheme: {
-          type: String,
-          default: null,
-        },
-        taskCreatedDate: {
+        taskCreatedAT: {
           type: Date,
-          default: Date.now,
+          default: Date.now(),
+        },
+        taskUpdatedAt: {
+          type: Date,
+          default: Date.now(),
         },
         dueDate: {
           type: Date,

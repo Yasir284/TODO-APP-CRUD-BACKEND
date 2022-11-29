@@ -2,7 +2,7 @@ const Todo = require("../module/todo");
 
 exports.createTodo = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title, tasks, textTheme } = req.body;
     console.log(title);
 
     if (!title) {
@@ -11,6 +11,8 @@ exports.createTodo = async (req, res) => {
 
     const todo = await Todo.create({
       title,
+      tasks,
+      textTheme,
     });
 
     res.status(200).json({
@@ -44,7 +46,7 @@ exports.getTodo = async (req, res) => {
 
 exports.deleteTodo = async (req, res) => {
   try {
-    const deleteTodo = await Todo.findByIdAndDelete(req.params.id);
+    const deleteTodo = await Todo.findByIdAndDelete(req.params.todoId);
     console.log(deleteTodo);
 
     res.status(200).json({
@@ -59,7 +61,8 @@ exports.deleteTodo = async (req, res) => {
 
 exports.updateTodo = async (req, res) => {
   try {
-    const todoId = req.params;
+    const todoId = req.params.todoId;
+    console.log(todoId);
 
     const data = await Todo.findByIdAndUpdate(todoId, req.body);
     console.log(data);
