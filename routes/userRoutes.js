@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const home = require("../controller/userController");
-const addTodo = require("../controller/addTodoController");
-const deleteTodo = require("../controller/deleteTodoController");
-const getTodo = require("../controller/getTodoController");
+const home = require("../controller/home");
+const {
+  createTodo,
+  getTodo,
+  deleteTodo,
+} = require("../controller/todosControllers");
 
 router.get("/", home);
-router.post("/addTodo", addTodo);
-router.delete("/deleteTodo/:id", deleteTodo);
-router.get("/getTodo", getTodo);
+router.route("/todo/v1").post(createTodo).get(getTodo).delete(deleteTodo);
+
 module.exports = router;
