@@ -55,7 +55,7 @@ exports.deleteTask = async (req, res) => {
   try {
     const { todoId, taskId } = req.params;
 
-    const findAndDelete = await Todo.update(
+    const findAndDelete = await Todo.updateOne(
       { _id: todoId },
       {
         $pull: {
@@ -78,18 +78,36 @@ exports.deleteTask = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const { todoId, taskId } = req.params;
+    // console.log(newTask);
 
-    const updateTask = await Todo.update(
-      { _id: todoId, _id: taskId },
+    const { task, isCompleted, isImportant, dueDate } = req.body;
+
+    //Find todo with todoId
+    const todo = await Todo.findById({ _id: todoId });
+
+    if (!todo) {
+      res.status(400).send("Todo not found");
+    }
+
+    // Find and update task
+    const uptateTask = await Todo.updateOne(
+      { _id: todoId, "tasks._id": taskId },
       {
         $set: {
-          tasks: { task: req.body.task },
+          "tasks.$.task": task,
+          "tasks.$.isCompleted": isCompleted,
+          "tasks.$.isImportant": isImportant,
+          "tasks.$.taskUpdatedAt": Date.now(),
+          "tasks.$.dueDate": dueDate,
         },
       }
-    );
-    console.log(update);
+    ).catch(console.log("Error in updating task"));
+    console.log(uptateTask);
 
-    res.status(200).send("Sucess");
+    res.status(200).json({
+      success: true,
+      message: "Task updated sucessfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(400).send("Error in response route");
