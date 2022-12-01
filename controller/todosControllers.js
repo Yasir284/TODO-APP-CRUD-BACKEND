@@ -1,20 +1,21 @@
 const Todo = require("../module/todo");
+const User = require("../module/user");
 
 exports.createTodo = async (req, res) => {
   try {
-    const { title, tasks, textTheme } = req.body;
+    const { title, tasks, textTheme, userId } = req.body;
     console.log(title);
 
     if (!title) {
       res.status(400).send("Title is mandatory");
+      return;
     }
+    const todo = { title, tasks, textTheme };
 
-    const todo = await Todo.create({
-      title,
-      tasks,
-      textTheme,
-    });
-
+    const result = await User.updateOne(
+      { _id: userId },
+      { $push: { todos: todo } }
+    );
     res.status(200).json({
       sucess: true,
       todo,
@@ -22,13 +23,16 @@ exports.createTodo = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).send(error.message);
+    return;
   }
 };
 
 exports.getTodo = async (req, res) => {
   try {
-    const todos = await Todo.find();
-    console.log(todos);
+    const user = await User.findById(req.body.userId);
+    console.log(user);
+
+    const todos = user.todos;
 
     if (!todos) {
       res.status(400).send("Can not get todos");
@@ -46,8 +50,16 @@ exports.getTodo = async (req, res) => {
 
 exports.deleteTodo = async (req, res) => {
   try {
-    const deleteTodo = await Todo.findByIdAndDelete(req.params.todoId);
-    console.log(deleteTodo);
+    const userId = req.body.userId;
+    const todoId = req.params.todoId;
+    const deleteTodo = await User.updateOne(
+      { _id: userId },
+      {
+        $pull: {
+          todos: { _id: todoId },
+        },
+      }
+    );
 
     res.status(200).json({
       sucess: true,
@@ -61,11 +73,17 @@ exports.deleteTodo = async (req, res) => {
 
 exports.updateTodo = async (req, res) => {
   try {
+    const userId = req.body.userId;
     const todoId = req.params.todoId;
-    console.log(todoId);
 
-    const data = await Todo.findByIdAndUpdate(todoId, req.body);
-    console.log(data);
+    const updateTodo = await User.updateOne(
+      { _id: userId, "todos._id": todoId },
+      {
+        $set: {
+          todos: req.body,
+        },
+      }
+    );
 
     res.status(200).json({
       sucess: true,

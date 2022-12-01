@@ -1,28 +1,27 @@
-const Todo = require("../module/todo");
+const User = require("../module/user");
 
 exports.createTask = async (req, res) => {
   try {
+    const userId = req.body.userId;
     const todoId = req.params.todoId;
 
-    const task = req.body;
+    const { task, dueDate } = req.body;
 
     // Find todo by id
-    const todo = await Todo.findById({ _id: todoId });
-    console.log(todo);
+    const updateTask = await User.updateOne(
+      { _id: userId, "todos._id": todoId },
+      {
+        $push: {
+          "todos.$[].tasks": { task, dueDate },
+        },
+      }
+    );
 
-    if (!todo) {
-      res.status(400).send("Todo not found");
-    }
-
-    // Add Task to DB
-    todo.tasks.push(task);
-
-    todo.save();
-
-    res.status(400).json({
+    res.status(200).json({
       sucess: true,
       message: "Todo added sucessfully",
-      todo,
+      task,
+      dueDate,
     });
   } catch (error) {
     console.log(error.message);
@@ -32,14 +31,17 @@ exports.createTask = async (req, res) => {
 
 exports.getTasks = async (req, res) => {
   try {
+    const userId = req.body.userId;
     const todoId = req.params.todoId;
-
-    const todo = await Todo.findById({ _id: todoId });
-
-    if (!todo) {
-      res.status(400).send("Failed to get Todo");
-    }
+    // 6388ad689e07fd838ae05b3b
+    // 6388ad7d9e07fd838ae05b3f
+    const user = await User.findById({ _id: userId });
+    const todo = user.todos.filter((todo) => todo._id == todoId);
     console.log(todo);
+    // JSON.parse(JSON.stringify(todo))
+    if (!todo || todo.length === 0) {
+      res.status(400).send("Todo not found");
+    }
 
     res.status(200).json({
       sucess: true,
@@ -47,23 +49,23 @@ exports.getTasks = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send("Error in response route");
+    res.status(500).send("Error in response route");
   }
 };
 
 exports.deleteTask = async (req, res) => {
   try {
+    const userId = req.body.userId;
     const { todoId, taskId } = req.params;
 
-    const findAndDelete = await Todo.updateOne(
-      { _id: todoId },
+    const findAndDelete = await User.updateOne(
+      { _id: userId, "todos._id": todoId },
       {
         $pull: {
-          tasks: { _id: taskId },
+          "todos.$.tasks": { _id: taskId },
         },
       }
     );
-    console.log(findAndDelete);
 
     res.status(200).json({
       success: true,
@@ -77,32 +79,39 @@ exports.deleteTask = async (req, res) => {
 
 exports.updateTask = async (req, res) => {
   try {
+    const userId = req.body.userId;
     const { todoId, taskId } = req.params;
     // console.log(newTask);
 
     const { task, isCompleted, isImportant, dueDate } = req.body;
-
-    //Find todo with todoId
-    const todo = await Todo.findById({ _id: todoId });
-
-    if (!todo) {
-      res.status(400).send("Todo not found");
-    }
+    const data = {
+      task,
+      isCompleted,
+      isImportant,
+      taskUpdatedAt: Date.now(),
+      dueDate,
+    };
 
     // Find and update task
-    const uptateTask = await Todo.updateOne(
-      { _id: todoId, "tasks._id": taskId },
+    const user = await User.findById({ _id: userId });
+
+    const tasks = user.todos.filter((todo) => todo._id == todoId)[0].tasks;
+    // console.log("tasks:", tasks);
+
+    const updatedTasks = tasks.map((task) => {
+      if (task._id != taskId) {
+        return task;
+      } else return (task = data);
+    });
+
+    const updateTodo = await User.updateOne(
+      { _id: userId, "todos._id": todoId },
       {
         $set: {
-          "tasks.$.task": task,
-          "tasks.$.isCompleted": isCompleted,
-          "tasks.$.isImportant": isImportant,
-          "tasks.$.taskUpdatedAt": Date.now(),
-          "tasks.$.dueDate": dueDate,
+          "todos.$.tasks": updatedTasks,
         },
       }
-    ).catch(console.log("Error in updating task"));
-    console.log(uptateTask);
+    );
 
     res.status(200).json({
       success: true,
