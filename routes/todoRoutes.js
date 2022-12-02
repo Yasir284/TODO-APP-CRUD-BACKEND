@@ -4,15 +4,15 @@ const userAuth = require("../middleware/auth");
 
 const {
   createTodo,
-  getTodo,
+  getTodos,
   deleteTodo,
-  updateTodo,
+  updateTodoTitle,
 } = require("../controller/todosControllers");
 
 // Routes for Todo
 router.post("/createTodo", userAuth, createTodo);
-router.get("/getTodo", userAuth, getTodo);
+router.get("/getTodos", userAuth, getTodos);
 router.delete("/deleteTodo/:todoId", userAuth, deleteTodo);
-router.put("/updateTodo/:todoId", userAuth, updateTodo);
+router.put("/updateTodo/:todoId", userAuth, updateTodoTitle);
 
 module.exports = router;

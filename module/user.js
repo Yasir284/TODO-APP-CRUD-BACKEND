@@ -6,25 +6,19 @@ const emailValidation = function (email) {
   return emailRegex.test(email);
 };
 
-const tasksSchema = mongoose.Schema(
-  {
-    task: String,
-    isCompleted: {
-      type: Boolean,
-      default: false,
-    },
-    isImportant: {
-      type: Boolean,
-      default: false,
-    },
-
-    dueDate: {
-      type: Date,
-      default: null,
-    },
+const tasksSchema = mongoose.Schema({
+  task: String,
+  isCompleted: {
+    type: Boolean,
+    default: false,
   },
-  { timestamps: true }
-);
+  isImportant: {
+    type: Boolean,
+    default: false,
+  },
+  taskCreatedAt: { type: Date, default: Date.now() },
+  taskUpdatedAt: { type: Date, default: Date.now() },
+});
 
 const todoSchema = mongoose.Schema(
   {
@@ -38,7 +32,12 @@ const todoSchema = mongoose.Schema(
     },
     tasks: [tasksSchema],
   },
-  { timestamps: true }
+  {
+    timestamps: {
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    },
+  }
 );
 
 const userSchema = mongoose.Schema(
@@ -64,7 +63,12 @@ const userSchema = mongoose.Schema(
     },
     todos: [todoSchema],
   },
-  { timestamps: true }
+  {
+    timestamps: {
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    },
+  }
 );
 
 module.exports = mongoose.model("User", userSchema);

@@ -1,4 +1,4 @@
-const Todo = require("../module/todo");
+// const Todo = require("../module/todo");
 const User = require("../module/user");
 
 exports.createTodo = async (req, res) => {
@@ -27,7 +27,7 @@ exports.createTodo = async (req, res) => {
   }
 };
 
-exports.getTodo = async (req, res) => {
+exports.getTodos = async (req, res) => {
   try {
     const user = await User.findById(req.body.userId);
     console.log(user);
@@ -71,7 +71,7 @@ exports.deleteTodo = async (req, res) => {
   }
 };
 
-exports.updateTodo = async (req, res) => {
+exports.updateTodoTitle = async (req, res) => {
   try {
     const userId = req.body.userId;
     const todoId = req.params.todoId;
@@ -80,7 +80,7 @@ exports.updateTodo = async (req, res) => {
       { _id: userId, "todos._id": todoId },
       {
         $set: {
-          todos: req.body,
+          "todos.$.title": req.body.title,
         },
       }
     );
