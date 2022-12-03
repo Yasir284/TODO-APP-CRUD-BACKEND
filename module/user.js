@@ -16,7 +16,7 @@ const tasksSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  taskCreatedAt: { type: Date, default: Date.now() },
+  taskCreatedAt: { type: Date },
   taskUpdatedAt: { type: Date, default: Date.now() },
 });
 
