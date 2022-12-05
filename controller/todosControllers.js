@@ -1,5 +1,5 @@
 // const Todo = require("../module/todo");
-const User = require("../module/user");
+const User = require("../module/userSchema");
 
 exports.createTodo = async (req, res) => {
   try {

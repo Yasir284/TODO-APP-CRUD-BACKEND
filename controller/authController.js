@@ -1,4 +1,4 @@
-const User = require("../module/user");
+const User = require("../module/userSchema");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
@@ -93,12 +93,31 @@ exports.userSignIn = async (req, res) => {
   }
 };
 
-exports.userSignOut = (req, res) => {
+exports.userSignOut = (_req, res) => {
   try {
     res.clearCookie("signIn");
     res.status(200).json({ sucess: true, message: "Signout successfully" });
   } catch (error) {
     console.log(error);
     res.status(400).send("Something went wrong!! Can't signout");
+  }
+};
+
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find().populate("Todo");
+    console.log(users);
+
+    if (!users) {
+      res.status(400).send("Failed to find users");
+    }
+
+    res.status(200).json({
+      sucess: true,
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error.message);
   }
 };

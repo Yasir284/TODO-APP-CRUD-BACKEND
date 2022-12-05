@@ -6,40 +6,6 @@ const emailValidation = function (email) {
   return emailRegex.test(email);
 };
 
-const tasksSchema = mongoose.Schema({
-  task: String,
-  isCompleted: {
-    type: Boolean,
-    default: false,
-  },
-  isImportant: {
-    type: Boolean,
-    default: false,
-  },
-  taskCreatedAt: { type: Date },
-  taskUpdatedAt: { type: Date, default: Date.now() },
-});
-
-const todoSchema = mongoose.Schema(
-  {
-    title: {
-      type: String,
-      require: [true, "Field is required"],
-    },
-    textTheme: {
-      type: String,
-      default: null,
-    },
-    tasks: [tasksSchema],
-  },
-  {
-    timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
-    },
-  }
-);
-
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -61,13 +27,15 @@ const userSchema = mongoose.Schema(
       type: String,
       default: null,
     },
-    todos: [todoSchema],
+    todos: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Todo",
+      },
+    ],
   },
   {
-    timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
-    },
+    timestamps: true,
   }
 );
 
