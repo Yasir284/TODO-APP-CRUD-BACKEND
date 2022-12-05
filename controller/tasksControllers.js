@@ -1,24 +1,22 @@
 const User = require("../module/userSchema");
+const Todo = require("../module/todoSchema");
 
 exports.createTask = async (req, res) => {
   try {
-    const userId = req.body.userId;
     const todoId = req.params.todoId;
 
     const { task } = req.body;
 
+    const data = {
+      task,
+      taskCreatedAt: Date.now(),
+      taskUpdatedAt: Date.now(),
+    };
+
     // Find todo by id
-    const updateTask = await User.updateOne(
-      { _id: userId, "todos._id": todoId },
-      {
-        $push: {
-          "todos.$[].tasks": {
-            task,
-            taskCreatedAt: Date.now(),
-            taskUpdatedAt: Date.now(),
-          },
-        },
-      }
+    const todo = await Todo.updateOne(
+      { _id: todoId },
+      { $push: { tasks: data } }
     );
 
     res.status(200).json({
@@ -37,7 +35,7 @@ exports.getTodoById = async (req, res) => {
     const userId = req.body.userId;
     const todoId = req.params.todoId;
 
-    const user = await User.findById({ _id: userId });
+    const user = await User.findById({ _id: userId }).populate("todos");
 
     const todo = user.todos.filter((todo) => todo._id == todoId);
     console.log(todo);
@@ -58,21 +56,21 @@ exports.getTodoById = async (req, res) => {
 
 exports.deleteTask = async (req, res) => {
   try {
-    const userId = req.body.userId;
     const { todoId, taskId } = req.params;
 
-    const findAndDelete = await User.updateOne(
-      { _id: userId, "todos._id": todoId },
-      {
-        $pull: {
-          "todos.$.tasks": { _id: taskId },
-        },
-      }
-    );
+    const todo = await Todo.findById({ _id: todoId });
+
+    const updatedTask = todo.tasks.filter((task) => task._id != taskId);
+
+    todo.tasks = updatedTask;
+    console.log(todo);
+
+    const updateTodo = await Todo.findByIdAndUpdate({ _id: todoId }, todo);
 
     res.status(200).json({
       success: true,
       message: "tasks successfully deleted",
+      todo,
     });
   } catch (error) {
     console.log(error);
@@ -80,4 +78,38 @@ exports.deleteTask = async (req, res) => {
   }
 };
 
-exports.updateTask = async (req, res) => {};
+exports.updateTask = async (req, res) => {
+  try {
+    const { todoId, taskId } = req.params;
+    const { task, isCompleted, isImportant } = req.body;
+
+    const todo = await Todo.findById({ _id: todoId });
+
+    const updatedTask = todo.tasks.map((e) => {
+      if (e._id == taskId) {
+        return (e = {
+          _id: e._id,
+          task,
+          isImportant,
+          isCompleted,
+          taskCreatedAt: e.taskCreatedAt,
+          taskUpdatedAt: Date.now(),
+        });
+      }
+      return e;
+    });
+
+    todo.tasks = updatedTask;
+    console.log(todo);
+
+    const updateTodo = await Todo.findByIdAndUpdate({ _id: todoId }, todo);
+
+    res.status(200).json({
+      success: true,
+      message: "tasks updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Error in response route");
+  }
+};

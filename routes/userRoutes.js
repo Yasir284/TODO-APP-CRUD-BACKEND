@@ -6,6 +6,7 @@ const {
   userSignOut,
   getUsers,
 } = require("../controller/authController");
+const auth = require("../middleware/auth");
 
 router.post("/u/signUp", userSignUp);
 router.get("/u/signIn", userSignIn);

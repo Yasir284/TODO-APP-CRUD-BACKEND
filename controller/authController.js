@@ -103,9 +103,9 @@ exports.userSignOut = (_req, res) => {
   }
 };
 
-exports.getUsers = async (req, res) => {
+exports.getUsers = async (_req, res) => {
   try {
-    const users = await User.find().populate("Todo");
+    const users = await User.find().populate("todos");
     console.log(users);
 
     if (!users) {
