@@ -10,14 +10,14 @@ exports.userSignUp = async (req, res) => {
     if (!(name && email && password)) {
       return res
         .status(400)
-        .json({ sucess: false, message: "All fields are mandatory" });
+        .json({ success: false, message: "All fields are mandatory" });
     }
 
     // Check if user already exist
     const checkIfUserExist = await User.findOne({ email });
     if (checkIfUserExist) {
       return res.status(400).json({
-        sucess: false,
+        success: false,
         message: "User already exist, With this email id!",
       });
     }
@@ -43,13 +43,15 @@ exports.userSignUp = async (req, res) => {
     user.password = undefined;
 
     res.status(200).json({
-      sucess: true,
+      success: true,
       message: `Hello ${name}, Your account is created successfully`,
       user,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ sucess: false, message: "Error in response route" });
+    res
+      .status(500)
+      .json({ success: false, message: "Error in response route" });
   }
 };
 
@@ -62,7 +64,7 @@ exports.userSignIn = async (req, res) => {
     if (!(email && password)) {
       return res
         .status(400)
-        .json({ sucess: false, message: "All fields are mandatory" });
+        .json({ success: false, message: "All fields are mandatory" });
     }
 
     // Validate if user exist and varify the password and send response accordingly
@@ -71,7 +73,7 @@ exports.userSignIn = async (req, res) => {
     if (!(user && bcrypt.compare(user.password, password))) {
       return res
         .status(400)
-        .json({ sucess: false, message: "Email or Password is incorrect" });
+        .json({ success: false, message: "Email or Password is incorrect" });
     }
 
     const token = jwt.sign(
@@ -92,13 +94,13 @@ exports.userSignIn = async (req, res) => {
         expires: new Date(Date.now() + 2 * 24 * 3600000),
       })
       .json({
-        sucess: true,
-        message: "Logged In Sucessfully",
+        success: true,
+        message: "Logged In Successfully",
       });
   } catch (error) {
     console.log(first);
     res.status(500).json({
-      sucess: false,
+      success: false,
       message: "Error in response route",
     });
   }
@@ -107,11 +109,11 @@ exports.userSignIn = async (req, res) => {
 exports.userSignOut = (_req, res) => {
   try {
     res.clearCookie("signIn");
-    res.status(200).json({ sucess: true, message: "Signout successfully" });
+    res.status(200).json({ success: true, message: "Signout successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      sucess: false,
+      success: false,
       message: "Error in response route",
     });
   }
@@ -127,7 +129,7 @@ exports.getUsers = async (_req, res) => {
     }
 
     res.status(200).json({
-      sucess: true,
+      success: true,
       users,
     });
   } catch (error) {
