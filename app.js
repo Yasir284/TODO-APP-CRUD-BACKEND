@@ -20,13 +20,13 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Hello world");
 });
 
 // Routes
 app.use("/todo", todoRoutes);
-app.use("/todo//tasks", tasksRoutes);
+app.use("/todo/tasks", tasksRoutes);
 app.use("/todo", userRoutes);
 
 module.exports = app;

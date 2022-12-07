@@ -5,7 +5,7 @@ const userAuth = async (req, res, next) => {
   const { signIn: token } = req.cookies;
 
   if (!token) {
-    res.status(400).send("Token not found");
+    res.status(400).json({ success: false, message: "Token not found" });
     return;
   }
 

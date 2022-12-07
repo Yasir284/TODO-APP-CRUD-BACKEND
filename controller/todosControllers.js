@@ -7,7 +7,7 @@ exports.createTodo = async (req, res) => {
     const { title, tasks, textTheme, userId } = req.body;
 
     if (!title) {
-      res.status(400).send("Title is mandatory");
+      res.status(400).json({ sucess: false, message: "Title is mandatory" });
       return;
     }
     const data = { title, tasks, textTheme };

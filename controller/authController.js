@@ -58,6 +58,7 @@ exports.userSignUp = async (req, res) => {
 exports.userSignIn = async (req, res) => {
   try {
     // Req data
+    // console.log(req);
     const { email, password } = req.body;
 
     // Check if all the requested data is available
