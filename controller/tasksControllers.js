@@ -113,3 +113,5 @@ exports.updateTask = async (req, res) => {
     res.status(400).send("Error in response route");
   }
 };
+
+exports.searchTasks = async (req, res) => {};

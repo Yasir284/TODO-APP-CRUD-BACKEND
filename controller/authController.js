@@ -8,13 +8,18 @@ exports.userSignUp = async (req, res) => {
     const { name, email, password } = req.body;
     // Check if all the fields are there
     if (!(name && email && password)) {
-      return res.status(400).send("All fields are mandatory");
+      return res
+        .status(400)
+        .json({ sucess: false, message: "All fields are mandatory" });
     }
 
     // Check if user already exist
     const checkIfUserExist = await User.findOne({ email });
     if (checkIfUserExist) {
-      return res.status(400).send("User already exist, With this email id!");
+      return res.status(400).json({
+        sucess: false,
+        message: "User already exist, With this email id!",
+      });
     }
 
     // Encrypt password and create user
@@ -44,7 +49,7 @@ exports.userSignUp = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send("Error in response route", error);
+    res.status(500).json({ sucess: false, message: "Error in response route" });
   }
 };
 
@@ -55,14 +60,18 @@ exports.userSignIn = async (req, res) => {
 
     // Check if all the requested data is available
     if (!(email && password)) {
-      return res.status(400).send("All fields are mandatory");
+      return res
+        .status(400)
+        .json({ sucess: false, message: "All fields are mandatory" });
     }
 
     // Validate if user exist and varify the password and send response accordingly
     const user = await User.findOne({ email });
 
     if (!(user && bcrypt.compare(user.password, password))) {
-      return res.status(400).send("Email or Password is incorrect");
+      return res
+        .status(400)
+        .json({ sucess: false, message: "Email or Password is incorrect" });
     }
 
     const token = jwt.sign(
@@ -85,11 +94,13 @@ exports.userSignIn = async (req, res) => {
       .json({
         sucess: true,
         message: "Logged In Sucessfully",
-        user,
       });
   } catch (error) {
     console.log(first);
-    res.status(400).send("Something went wrong in response route");
+    res.status(500).json({
+      sucess: false,
+      message: "Error in response route",
+    });
   }
 };
 
@@ -99,7 +110,10 @@ exports.userSignOut = (_req, res) => {
     res.status(200).json({ sucess: true, message: "Signout successfully" });
   } catch (error) {
     console.log(error);
-    res.status(400).send("Something went wrong!! Can't signout");
+    res.status(500).json({
+      sucess: false,
+      message: "Error in response route",
+    });
   }
 };
 

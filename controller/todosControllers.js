@@ -92,3 +92,5 @@ exports.updateTodoTitle = async (req, res) => {
     req.status(400).send("Todo update failed");
   }
 };
+
+exports.searchTodo = async (req, res) => {};
