@@ -7,7 +7,7 @@ exports.createTodo = async (req, res) => {
     const { title, tasks, textTheme, userId } = req.body;
 
     if (!title) {
-      res.status(400).json({ sucess: false, message: "Title is mandatory" });
+      res.status(400).json({ success: false, message: "Title is mandatory" });
       return;
     }
     const data = { title, tasks, textTheme };
@@ -23,13 +23,13 @@ exports.createTodo = async (req, res) => {
     );
 
     res.status(200).json({
-      sucess: true,
+      success: true,
       message: "Todo created successfully",
       todo,
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send(error.message);
+    res.status(400).json({ success: false, message: error.message });
     return;
   }
 };
@@ -42,16 +42,16 @@ exports.getTodos = async (req, res) => {
     const todos = user.todos;
 
     if (!todos) {
-      res.status(400).send("Can not get todos");
+      res.status(400).json({ success: false, message: "Can not get todos" });
     }
 
     res.status(200).json({
-      sucess: true,
+      success: true,
       todos,
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send(error.message);
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -65,12 +65,12 @@ exports.deleteTodo = async (req, res) => {
       { $pull: { todos: todoId } }
     );
     res.status(200).json({
-      sucess: true,
+      success: true,
       message: "Todo deleted from DB",
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send(error.message);
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -84,12 +84,12 @@ exports.updateTodoTitle = async (req, res) => {
     );
 
     res.status(200).json({
-      sucess: true,
-      message: "Todo updated sucessfully",
+      success: true,
+      message: "Todo updated successfully",
     });
   } catch (error) {
     console.log(error);
-    req.status(400).send("Todo update failed");
+    req.status(400).json({ success: false, message: "Todo update failed" });
   }
 };
 

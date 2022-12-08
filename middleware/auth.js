@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
 const userAuth = async (req, res, next) => {
+  console.log(req.cookies);
   const { signIn: token } = req.cookies;
 
   if (!token) {
@@ -14,7 +15,7 @@ const userAuth = async (req, res, next) => {
     req.body.userId = decode.id;
   } catch (error) {
     console.log(error);
-    res.status(400).send("Error in middleware");
+    res.status(400).json({ success: false, message: "Error in middleware" });
     return;
   }
 

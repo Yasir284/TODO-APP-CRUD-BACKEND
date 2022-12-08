@@ -20,13 +20,15 @@ exports.createTask = async (req, res) => {
     );
 
     res.status(200).json({
-      sucess: true,
-      message: "Todo added sucessfully",
+      success: true,
+      message: "Todo added successfully",
       task,
     });
   } catch (error) {
     console.log(error.message);
-    res.status(400).send("Error in adding task to DB");
+    res
+      .status(400)
+      .json({ success: false, message: "Error in adding task to DB" });
   }
 };
 
@@ -41,16 +43,18 @@ exports.getTodoById = async (req, res) => {
     console.log(todo);
 
     if (!todo || todo.length === 0) {
-      res.status(400).send("Todo not found");
+      res.status(400).json({ success: false, message: "Todo not found" });
     }
 
     res.status(200).json({
-      sucess: true,
+      success: true,
       todo,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error in response route");
+    res
+      .status(500)
+      .json({ success: false, message: "Error in response route" });
   }
 };
 
@@ -74,7 +78,9 @@ exports.deleteTask = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send("Error in response route");
+    res
+      .status(400)
+      .json({ success: false, message: "Error in response route" });
   }
 };
 
@@ -84,6 +90,10 @@ exports.updateTask = async (req, res) => {
     const { task, isCompleted, isImportant } = req.body;
 
     const todo = await Todo.findById({ _id: todoId });
+
+    if (!todo) {
+      res.status(400).json({ success: false, message: "Cann't find todo" });
+    }
 
     const updatedTask = todo.tasks.map((e) => {
       if (e._id == taskId) {
@@ -110,7 +120,9 @@ exports.updateTask = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send("Error in response route");
+    res
+      .status(400)
+      .json({ success: false, message: "Error in response route" });
   }
 };
 

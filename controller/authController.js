@@ -97,6 +97,7 @@ exports.userSignIn = async (req, res) => {
       .json({
         success: true,
         message: "Logged In Successfully",
+        name: user.name,
       });
   } catch (error) {
     console.log(first);
@@ -120,6 +121,15 @@ exports.userSignOut = (_req, res) => {
   }
 };
 
+exports.isSignedIn = (req, res) => {
+  if (!req.body.userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "User is not logged in" });
+  }
+  res.status(200).json({ success: true, message: "User is logged in" });
+};
+
 exports.getUsers = async (_req, res) => {
   try {
     const users = await User.find().populate("todos");
@@ -136,5 +146,19 @@ exports.getUsers = async (_req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send(error.message);
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const user = await User.findById({ _id: userId }, "name email");
+    console.log(user);
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.log(error.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Error in response route" });
   }
 };
