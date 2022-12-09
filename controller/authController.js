@@ -100,7 +100,7 @@ exports.userSignIn = async (req, res) => {
         name: user.name,
       });
   } catch (error) {
-    console.log(first);
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Error in response route",
