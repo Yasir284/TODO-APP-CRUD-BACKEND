@@ -20,7 +20,7 @@ const todoSchema = mongoose.Schema(
       type: String,
       require: [true, "Field is required"],
     },
-    textTheme: {
+    todoTheme: {
       type: String,
       default: null,
     },

@@ -74,14 +74,15 @@ exports.deleteTodo = async (req, res) => {
   }
 };
 
-exports.updateTodoTitle = async (req, res) => {
+exports.updateTodo = async (req, res) => {
   try {
     const todoId = req.params.todoId;
+    const data = {
+      title: req.body.title,
+      todoTheme: req.body.todoTheme,
+    };
 
-    const updateTodo = await Todo.findByIdAndUpdate(
-      { _id: todoId },
-      { title: req.body.title }
-    );
+    const updateTodo = await Todo.findByIdAndUpdate({ _id: todoId }, data);
 
     res.status(200).json({
       success: true,
@@ -89,7 +90,10 @@ exports.updateTodoTitle = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    req.status(400).json({ success: false, message: "Todo update failed" });
+    req.status(400).json({
+      success: false,
+      message: "Todo update failed",
+    });
   }
 };
 

@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
 const userAuth = async (req, res, next) => {
-  console.log(req.cookies);
   const { signIn: token } = req.cookies;
 
   if (!token) {

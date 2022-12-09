@@ -82,7 +82,7 @@ exports.userSignIn = async (req, res) => {
         id: user._id,
       },
       TOKEN_SECRET,
-      { expiresIn: "4h" }
+      { expiresIn: "24h" }
     );
 
     user.token = token;

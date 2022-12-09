@@ -6,13 +6,13 @@ const {
   createTodo,
   getTodos,
   deleteTodo,
-  updateTodoTitle,
+  updateTodo,
 } = require("../controller/todosControllers");
 
 // Routes for Todo
 router.post("/createTodo", userAuth, createTodo);
 router.get("/getTodos", userAuth, getTodos);
 router.delete("/deleteTodo/:todoId", userAuth, deleteTodo);
-router.put("/updateTodo/:todoId", userAuth, updateTodoTitle);
+router.put("/updateTodo/:todoId", userAuth, updateTodo);
 
 module.exports = router;
