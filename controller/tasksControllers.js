@@ -1,5 +1,6 @@
 const User = require("../module/userSchema");
 const Todo = require("../module/todoSchema");
+const ObjectId = require("mongoose/lib/types/objectid");
 
 exports.createTask = async (req, res) => {
   try {
@@ -87,32 +88,45 @@ exports.deleteTask = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const { todoId, taskId } = req.params;
+    console.log(taskId);
     const { task, isCompleted, isImportant } = req.body;
 
-    const todo = await Todo.findById({ _id: todoId });
-
-    if (!todo) {
-      res.status(400).json({ success: false, message: "Cann't find todo" });
-    }
-
-    const updatedTask = todo.tasks.map((e) => {
-      if (e._id == taskId) {
-        return (e = {
-          _id: e._id,
-          task,
-          isImportant,
-          isCompleted,
-          taskCreatedAt: e.taskCreatedAt,
-          taskUpdatedAt: Date.now(),
-        });
+    const todo = await Todo.updateOne(
+      { tasks: { $elemMatch: { _id: taskId } } },
+      {
+        $set: {
+          "tasks.$": {
+            task,
+            isImportant,
+            isCompleted,
+            taskUpdatedAt: Date.now(),
+          },
+        },
       }
-      return e;
-    });
-
-    todo.tasks = updatedTask;
+    );
     console.log(todo);
+    // if (!todo) {
+    //   res.status(400).json({ success: false, message: "Cann't find todo" });
+    // }
+    // console.log("tasks", todo.tasks.findById(taskId));
+    // const updatedTask = todo.tasks.forEach((e) => {
+    //   console.log(e._id == taskId);
+    //   if (e._id == taskId) {
+    //     e = {
+    //       _id: e._id,
+    //       task,
+    //       isImportant,
+    //       isCompleted,
+    //       taskCreatedAt: e.taskCreatedAt,
+    //       taskUpdatedAt: Date.now(),
+    //     };
+    //   }
+    // });
 
-    const updateTodo = await Todo.findByIdAndUpdate({ _id: todoId }, todo);
+    // todo.tasks = updatedTask;
+    // console.log(todo);
+
+    // const updateTodo = await Todo.findByIdAndUpdate({ _id: todoId }, todo);
 
     res.status(200).json({
       success: true,
