@@ -13,6 +13,6 @@ const {
 router.put("/createTask/:todoId", userAuth, createTask);
 router.get("/getTodoById/:todoId", userAuth, getTodoById);
 router.delete("/deleteTask/:todoId/:taskId", userAuth, deleteTask);
-router.put("/updateTask/:todoId/:taskId", userAuth, updateTask);
+router.put("/updateTask/:taskId", userAuth, updateTask);
 
 module.exports = router;

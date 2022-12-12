@@ -87,11 +87,10 @@ exports.deleteTask = async (req, res) => {
 
 exports.updateTask = async (req, res) => {
   try {
-    const { todoId, taskId } = req.params;
-    console.log(taskId);
+    const { taskId } = req.params;
     const { task, isCompleted, isImportant } = req.body;
 
-    const todo = await Todo.updateOne(
+    const todo = await Todo.findOneAndUpdate(
       { tasks: { $elemMatch: { _id: taskId } } },
       {
         $set: {
@@ -105,28 +104,6 @@ exports.updateTask = async (req, res) => {
       }
     );
     console.log(todo);
-    // if (!todo) {
-    //   res.status(400).json({ success: false, message: "Cann't find todo" });
-    // }
-    // console.log("tasks", todo.tasks.findById(taskId));
-    // const updatedTask = todo.tasks.forEach((e) => {
-    //   console.log(e._id == taskId);
-    //   if (e._id == taskId) {
-    //     e = {
-    //       _id: e._id,
-    //       task,
-    //       isImportant,
-    //       isCompleted,
-    //       taskCreatedAt: e.taskCreatedAt,
-    //       taskUpdatedAt: Date.now(),
-    //     };
-    //   }
-    // });
-
-    // todo.tasks = updatedTask;
-    // console.log(todo);
-
-    // const updateTodo = await Todo.findByIdAndUpdate({ _id: todoId }, todo);
 
     res.status(200).json({
       success: true,
