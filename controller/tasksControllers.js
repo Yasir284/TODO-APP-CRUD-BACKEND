@@ -93,12 +93,10 @@ exports.updateTask = async (req, res) => {
       { tasks: { $elemMatch: { _id: taskId } } },
       {
         $set: {
-          "tasks.$": {
-            task,
-            isImportant,
-            isCompleted,
-            taskUpdatedAt: Date.now(),
-          },
+          "tasks.$.task": task,
+          "tasks.$.isImportant": isImportant,
+          "tasks.$.isCompleted": isCompleted,
+          "tasks.$.taskUpdatedAt": Date.now(),
         },
       }
     );
