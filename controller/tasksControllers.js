@@ -63,14 +63,13 @@ exports.deleteTask = async (req, res) => {
   try {
     const { todoId, taskId } = req.params;
 
-    const todo = await Todo.findById({ _id: todoId });
-
-    const updatedTask = todo.tasks.filter((task) => task._id != taskId);
-
-    todo.tasks = updatedTask;
+    const todo = await Todo.updateOne(
+      {
+        _id: todoId,
+      },
+      { $pull: { tasks: { _id: taskId } } }
+    );
     console.log(todo);
-
-    const updateTodo = await Todo.findByIdAndUpdate({ _id: todoId }, todo);
 
     res.status(200).json({
       success: true,
