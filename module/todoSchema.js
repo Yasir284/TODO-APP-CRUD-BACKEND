@@ -22,7 +22,7 @@ const todoSchema = mongoose.Schema(
     },
     todoTheme: {
       type: String,
-      default: null,
+      default: "violet",
     },
     tasks: [tasksSchema],
     user: {

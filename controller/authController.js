@@ -121,13 +121,19 @@ exports.userSignOut = (_req, res) => {
   }
 };
 
-exports.isSignedIn = (req, res) => {
-  if (!req.body.userId) {
+exports.isSignedIn = async (req, res) => {
+  const userId = req.body.userId;
+  if (!userId) {
     return res
       .status(400)
       .json({ success: false, message: "User is not logged in" });
   }
-  res.status(200).json({ success: true, message: "User is logged in" });
+  const user = await User.findById(
+    { _id: userId },
+    "-email -password -todos -token"
+  );
+
+  res.status(200).json({ success: true, message: "User is logged in", user });
 };
 
 exports.getUsers = async (_req, res) => {
@@ -146,19 +152,5 @@ exports.getUsers = async (_req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send(error.message);
-  }
-};
-
-exports.getUser = async (req, res) => {
-  try {
-    const userId = req.body.userId;
-    const user = await User.findById({ _id: userId }, "name email");
-    console.log(user);
-    res.status(200).json({ success: true, user });
-  } catch (error) {
-    console.log(error.message);
-    res
-      .status(500)
-      .json({ success: false, message: "Error in response route" });
   }
 };
