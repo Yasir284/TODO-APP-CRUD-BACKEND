@@ -1,6 +1,5 @@
 const User = require("../module/userSchema");
 const Todo = require("../module/todoSchema");
-const ObjectId = require("mongoose/lib/types/objectid");
 
 exports.createTask = async (req, res) => {
   try {
