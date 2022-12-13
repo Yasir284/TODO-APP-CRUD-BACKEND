@@ -25,6 +25,10 @@ const todoSchema = mongoose.Schema(
       default: null,
     },
     tasks: [tasksSchema],
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: {
