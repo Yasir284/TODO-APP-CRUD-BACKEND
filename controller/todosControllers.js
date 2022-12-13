@@ -1,6 +1,7 @@
 // const Todo = require("../module/todo");
 const User = require("../module/userSchema");
 const Todo = require("../module/todoSchema");
+const { forEach } = require("mongoose/lib/helpers/specialProperties");
 
 exports.createTodo = async (req, res) => {
   try {
@@ -10,7 +11,7 @@ exports.createTodo = async (req, res) => {
       res.status(400).json({ success: false, message: "Title is mandatory" });
       return;
     }
-    const data = { title, tasks, textTheme };
+    const data = { title, tasks, textTheme, user: userId };
 
     // Create todo
     const todo = await Todo.create(data);
@@ -97,4 +98,37 @@ exports.updateTodo = async (req, res) => {
   }
 };
 
-exports.searchTodo = async (req, res) => {};
+exports.searchTodos = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    let search = req.body.search;
+
+    const todos = await Todo.find({
+      $or: [{ title: new RegExp(search, "i") }],
+    });
+    console.log(todos);
+
+    if (!todos) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Todo not found" });
+    }
+
+    let filterTodos = todos.filter((todo) => {
+      if (todo.user.equals(userId) === true) return todo;
+    });
+
+    if (filterTodos.length == 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Todo not found" });
+    }
+
+    res.status(200).json({ success: true, todos: filterTodos });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error in response route" });
+  }
+};
