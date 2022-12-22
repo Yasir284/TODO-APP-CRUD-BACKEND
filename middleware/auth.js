@@ -2,7 +2,11 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
 const userAuth = async (req, res, next) => {
-  const { signIn: token } = req.cookies;
+  const bearerToken = req.header("Authorization")
+    ? req.header("Authorization").replace("Bearer ", "")
+    : "";
+
+  const { signIn: token } = req.cookies || bearerToken;
 
   if (!token) {
     res.status(400).json({ success: false, message: "Token not found" });

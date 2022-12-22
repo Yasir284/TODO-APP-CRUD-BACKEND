@@ -88,12 +88,6 @@ exports.userSignIn = async (req, res) => {
     user.token = token;
     user.password = undefined;
 
-    const userInfo = {
-      name: user.name,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
-
     res
       .status(200)
       .cookie("signIn", token, {
@@ -103,7 +97,8 @@ exports.userSignIn = async (req, res) => {
       .json({
         success: true,
         message: "Logged In Successfully",
-        user: userInfo,
+        token,
+        user,
       });
   } catch (error) {
     console.log(error);
