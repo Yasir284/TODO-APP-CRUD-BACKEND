@@ -6,7 +6,7 @@ const userAuth = async (req, res, next) => {
     ? req.header("Authorization").replace("Bearer ", "")
     : "";
 
-  const { signIn: token } = req.cookies || bearerToken;
+  const token = req.cookies.signIn || bearerToken;
 
   if (!token) {
     res.status(400).json({ success: false, message: "Token not found" });
