@@ -6,6 +6,7 @@ const userAuth = async (req, res, next) => {
     ? req.header("Authorization").replace("Bearer ", "")
     : "";
 
+  console.log(req.cookies.signIn);
   const token = req.cookies.signIn || bearerToken;
 
   if (!token) {
